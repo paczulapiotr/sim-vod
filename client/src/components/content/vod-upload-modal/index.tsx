@@ -11,7 +11,7 @@ function uploadToServer(file: File) {
 
   fetch(uploadUrl(file.name), {
     method: "POST",
-    body: data
+    body: data,
   });
 }
 
@@ -20,6 +20,7 @@ const VodUploadModal = (props: ModalProps) => {
 
   const uploadHandler = async () => {
     uploadToServer(file!);
+    props.close();
   };
 
   const cancelHandler = () => {
@@ -32,10 +33,14 @@ const VodUploadModal = (props: ModalProps) => {
     <Modal {...newProps}>
       <div className="vod-upload">
         <div className="vod-upload-drop">
-          <VideoDropzone fileDropped={file => setFile(file)} />
+          <VideoDropzone fileDropped={(file) => setFile(file)} />
         </div>
         <div className="vod-upload-controls">
-          <button className="default-button" onClick={uploadHandler}>
+          <button
+            hidden={file == null}
+            className="default-button"
+            onClick={uploadHandler}
+          >
             Upload
           </button>
           <button className="default-button" onClick={cancelHandler}>
