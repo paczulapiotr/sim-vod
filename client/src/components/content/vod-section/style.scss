@@ -1,0 +1,22 @@
+@import "~src/styles/variables";
+
+.vod-section {
+  padding: 2rem;
+  .vod-section-header {
+    .void-section-icon {
+      padding-right: 10px;
+      color: $base-green;
+    }
+
+    .vod-section-title {
+      color: $base-white;
+    }
+  }
+  .vod-section-videos {
+    margin-top: 1rem;
+    & > * {
+      margin: 0.5rem;
+      display: inline-block;
+    }
+  }
+}

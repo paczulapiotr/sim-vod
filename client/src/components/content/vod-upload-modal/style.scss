@@ -1,0 +1,27 @@
+@import "~src/styles/variables";
+.vod-upload {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  &-drop {
+    flex: 1;
+    & > div {
+      height: 100px;
+      background-color: $light-grey;
+      margin: 0.4rem;
+      padding: 0.5rem;
+    }
+    p {
+      word-wrap: break-word;
+    }
+  }
+  &-controls {
+    display: flex;
+    justify-content: flex-end;
+    & > button {
+      margin-left: 1rem;
+    }
+  }
+}

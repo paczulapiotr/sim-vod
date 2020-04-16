@@ -1,0 +1,31 @@
+@import "~src/styles/variables";
+.vod-block {
+  cursor: pointer;
+  background-color: $dark-white;
+  border-radius: 5px;
+  padding: 0.5rem;
+
+  .vod-block-img {
+    position: relative;
+    border-radius: 2px;
+    img {
+      height: 200px;
+      width: 300px;
+    }
+
+    .vod-timer {
+      position: absolute;
+      right: 1rem;
+      bottom: 1rem;
+      background-color: black;
+      color: white;
+      border-radius: 5px;
+      padding: 3px;
+    }
+  }
+
+  .vod-block-title {
+    margin-top: 0.2rem;
+    font-weight: 600;
+  }
+}

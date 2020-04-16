@@ -1,0 +1,33 @@
+version: "3"
+
+services:
+  db:
+    image: mongo:4.2.5-bionic
+    volumes:
+      - mongodb:/data/db
+      - mongoconfig:/data/configdb
+  server:
+    build: ./server
+    ports:
+      - 5000:5000
+    environment:
+      - FFMPEG_PATH=ffmpeg
+      - FFPROBE_PATH=ffprobe
+      - VOD_FOLDER_PATH=./vod
+      - PREVOD_FOLDER_PATH=./prevod
+      - MONGO_PATH=mongodb://db:27017
+      - MONGO_DB_NAME=sim
+    depends_on:
+      - db
+  web:
+    build: ./client
+    ports:
+      - 3000:3000
+    depends_on:
+      - server
+
+volumes:
+  mongodb:
+    driver: local
+  mongoconfig:
+    driver: local

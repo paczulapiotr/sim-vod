@@ -1,0 +1,14 @@
+@import "~src/styles/variables";
+
+.logo-icon {
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: 10px;
+
+  .logo-icon-head {
+    color: $base-white;
+  }
+  .logo-icon-tail {
+    color: $base-green;
+  }
+}
