@@ -9,7 +9,7 @@ services:
   server:
     build: ./server
     ports:
-      - 5000:5000
+      - 4880:5000
     environment:
       - FFMPEG_PATH=ffmpeg
       - FFPROBE_PATH=ffprobe
@@ -22,7 +22,7 @@ services:
   web:
     build: ./client
     ports:
-      - 3000:3000
+      - 4881:3000
     depends_on:
       - server
 

@@ -1,6 +1,6 @@
 const playlistFileName = "playlist.m3u8";
 
-const apiUrl = "http://localhost:5000";
+const apiUrl = "http://localhost:4880";
 
 export function vodUrl(vodGuid: string) {
   return `${apiUrl}/api/vod/${vodGuid}/${playlistFileName}`;

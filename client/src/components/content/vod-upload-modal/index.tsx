@@ -36,16 +36,16 @@ const VodUploadModal = (props: ModalProps) => {
   };
 
   const cancelHandler = () => {
-    setFile(undefined);
+    onCloseOverride();
   };
 
-  const onCloseOverrid = () => {
+  const onCloseOverride = () => {
     setFile(undefined);
     setFileName(undefined);
     props.close();
   };
 
-  const newProps = { ...props, close: onCloseOverrid, title: "Upload video" };
+  const newProps = { ...props, close: onCloseOverride, title: "Upload video" };
 
   return (
     <Modal {...newProps}>
