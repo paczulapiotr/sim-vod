@@ -19,9 +19,15 @@
   }
   &-controls {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     & > button {
       margin-left: 1rem;
+    }
+
+    #file-name {
+      margin-left: 1rem;
+      justify-self: left;
+      height: 20px;
     }
   }
 }

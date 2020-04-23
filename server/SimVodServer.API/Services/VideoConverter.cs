@@ -38,7 +38,7 @@ namespace SimVodServer.API.Services
 
         public VideoConverter(IConfiguration configuration)
         {
-            
+
             _ffmpegPath = configuration.GetFfmpegPath();
             _ffprobePath = configuration.GetFfprobe();
             _outputPath = configuration.GetVodFolderPath();
@@ -75,18 +75,23 @@ namespace SimVodServer.API.Services
         private void Mp4ToHls(FileInfo file, string destFolder, IEnumerable<Resolution> resolutions)
         {
             var process = new Process();
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.CreateNoWindow = true;
-            process.StartInfo.FileName = _ffmpegPath;
-            process.StartInfo.Arguments = CreateFfmpegArgumentsForResolutions(file.FullName, destFolder, resolutions);
-            process.Start();
-
-            process.WaitForExit();
-            if (process.ExitCode != 0)
+            try
             {
-                throw new Exception($"Error while processing file: {file.Name}");
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.CreateNoWindow = true;
+                process.StartInfo.FileName = _ffmpegPath;
+                process.StartInfo.Arguments = CreateFfmpegArgumentsForResolutions(file.FullName, destFolder, resolutions);
+                process.Start();
+                process.WaitForExit();
             }
-            process.Kill();
+            catch (Exception ex)
+            {
+                throw new Exception($"Error while processing file: {file.Name}", ex);
+            }
+            finally
+            {
+                process.Kill();
+            }
         }
 
         public (long duration, int width, int height) GetVideoMetadata(FileInfo file)

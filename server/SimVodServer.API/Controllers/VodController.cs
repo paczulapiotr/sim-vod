@@ -23,11 +23,11 @@ namespace SimVodServer.API.Controllers
 
         [HttpPost("[action]")]
         [RequestSizeLimit(1073741824)]
-        public async Task<IActionResult> Upload(IFormFile file)
+        public async Task<IActionResult> Upload(IFormFile file, string fileName)
         {
             using (var stream = file.OpenReadStream())
             {
-                await _uploadVideo.RunAsync(stream, file.FileName);
+                await _uploadVideo.RunAsync(stream, fileName ?? file.FileName);
             }
 
             return Ok();

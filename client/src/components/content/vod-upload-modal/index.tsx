@@ -4,22 +4,30 @@ import "./style.scss";
 import VideoDropzone from "src/components/content/vod-dropzone";
 import { uploadUrl } from "src/api/urls";
 
-function uploadToServer(file: File) {
+function uploadToServer(file: File, name: string) {
   var data = new FormData();
-  console.log(file);
+  var fileName = name || file.name;
   data.append("file", file);
+  data.append("fileName", fileName);
 
-  fetch(uploadUrl(file.name), {
+  fetch(uploadUrl(), {
     method: "POST",
     body: data,
+  }).then((response) => {
+    if (response.status == 200) {
+      alert(`File ${fileName} was uploaded succesfully`);
+    } else {
+      alert(`'${fileName}' upload failed. File might be corrupted!`);
+    }
   });
 }
 
 const VodUploadModal = (props: ModalProps) => {
   const [file, setFile] = useState<File>();
+  const [fileName, setFileName] = useState<string>();
 
   const uploadHandler = async () => {
-    uploadToServer(file!);
+    uploadToServer(file!, fileName!);
     props.close();
   };
 
@@ -27,25 +35,49 @@ const VodUploadModal = (props: ModalProps) => {
     setFile(undefined);
   };
 
-  const newProps = { ...props, title: "Upload video" };
+  const onCloseOverrid = () => {
+    setFile(undefined);
+    setFileName(undefined);
+    props.close();
+  };
+
+  const newProps = { ...props, close: onCloseOverrid, title: "Upload video" };
 
   return (
     <Modal {...newProps}>
       <div className="vod-upload">
         <div className="vod-upload-drop">
-          <VideoDropzone fileDropped={(file) => setFile(file)} />
+          <VideoDropzone
+            fileDropped={(file) => {
+              setFile(file);
+              setFileName(file.name);
+            }}
+          />
         </div>
         <div className="vod-upload-controls">
-          <button
-            hidden={file == null}
-            className="default-button"
-            onClick={uploadHandler}
-          >
-            Upload
-          </button>
-          <button className="default-button" onClick={cancelHandler}>
-            Cancel
-          </button>
+          <div>
+            <div hidden={file == null}>
+              <span>File name:</span>
+              <input
+                id="file-name"
+                placeholder="Enter file name"
+                value={fileName}
+                onChange={(e) => setFileName(e.target.value)}
+              />
+            </div>
+          </div>
+          <div>
+            <button
+              hidden={file == null}
+              className="default-button"
+              onClick={uploadHandler}
+            >
+              Upload
+            </button>
+            <button className="default-button" onClick={cancelHandler}>
+              Cancel
+            </button>
+          </div>
         </div>
       </div>
     </Modal>
