@@ -15,20 +15,20 @@ namespace SimVodServer.API.Services
     {
         private const string _playlistFileContent = @"#EXTM3U
 #EXT-X-VERSION:3
-#EXT-X-STREAM-INF:BANDWIDTH=800000,RESOLUTION=640x360
+#EXT-X-STREAM-INF:BANDWIDTH=400000,RESOLUTION=640x360
 360p.m3u8
-#EXT-X-STREAM-INF:BANDWIDTH=1400000,RESOLUTION=842x480
+#EXT-X-STREAM-INF:BANDWIDTH=800000,RESOLUTION=842x480
 480p.m3u8
-#EXT-X-STREAM-INF:BANDWIDTH=2800000,RESOLUTION=1280x720
+#EXT-X-STREAM-INF:BANDWIDTH=1400000,RESOLUTION=1280x720
 720p.m3u8
-#EXT-X-STREAM-INF:BANDWIDTH=5000000,RESOLUTION=1920x1080
+#EXT-X-STREAM-INF:BANDWIDTH=2800000,RESOLUTION=1920x1080
 1080p.m3u8";
 
         private const string _ffmpegBaseArg = "-hide_banner -y -i {0} "; // {0} video src
         private readonly Dictionary<Resolution, string> _ffmpegResolutionArgs = new Dictionary<Resolution, string> {
-            { Resolution.Res360p, $"-vf \"scale=640:360:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,setsar=1\" -c:a aac -ar 48000 -c:v h264 -profile:v main -crf 20 -sc_threshold 0 -g 48 -keyint_min 48 -hls_time 4 -hls_playlist_type vod -b:v 800k -maxrate 856k -max_muxing_queue_size 9999 -bufsize 1200k -b:a 96k -hls_segment_filename {Path.Combine("{0}", "360p_%03d.ts")} {Path.Combine("{0}","360p.m3u8")} " }, // {0} folder dest for m3u8 file
-            { Resolution.Res480p, $"-vf \"scale=842:480:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,setsar=1\" -c:a aac -ar 48000 -c:v h264 -profile:v main -crf 20 -sc_threshold 0 -g 48 -keyint_min 48 -hls_time 4 -hls_playlist_type vod -b:v 1400k -maxrate 1498k -max_muxing_queue_size 9999 -bufsize 2100k -b:a 128k -hls_segment_filename {Path.Combine("{0}", "480p_%03d.ts")} {Path.Combine("{0}","480p.m3u8")} " }, // {0} folder dest for m3u8 file
-            { Resolution.Res720p, $"-vf \"scale=1280:720:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,setsar=1\" -c:a aac -ar 48000 -c:v h264 -profile:v main -crf 20 -sc_threshold 0 -g 48 -keyint_min 48 -hls_time 4 -hls_playlist_type vod -b:v 2800k -maxrate 2996k -max_muxing_queue_size 9999 -bufsize 4200k -b:a 128k -hls_segment_filename {Path.Combine("{0}", "720p_%03d.ts")} {Path.Combine("{0}","720p.m3u8")} " }, // {0} folder dest for m3u8 file
+            { Resolution.Res360p, $"-vf \"scale=640:360:force_original_aspect_ratio=decrease,pad=640:360:(ow-iw)/2:(oh-ih)/2,setsar=1\" -c:a aac -ar 48000 -c:v h264 -profile:v main -crf 20 -sc_threshold 0 -g 48 -keyint_min 48 -hls_time 4 -hls_playlist_type vod -b:v 800k -maxrate 856k -max_muxing_queue_size 9999 -bufsize 1200k -b:a 96k -hls_segment_filename {Path.Combine("{0}", "360p_%03d.ts")} {Path.Combine("{0}","360p.m3u8")} " }, // {0} folder dest for m3u8 file
+            { Resolution.Res480p, $"-vf \"scale=842:480:force_original_aspect_ratio=decrease,pad=842:480:(ow-iw)/2:(oh-ih)/2,setsar=1\" -c:a aac -ar 48000 -c:v h264 -profile:v main -crf 20 -sc_threshold 0 -g 48 -keyint_min 48 -hls_time 4 -hls_playlist_type vod -b:v 1400k -maxrate 1498k -max_muxing_queue_size 9999 -bufsize 2100k -b:a 128k -hls_segment_filename {Path.Combine("{0}", "480p_%03d.ts")} {Path.Combine("{0}","480p.m3u8")} " }, // {0} folder dest for m3u8 file
+            { Resolution.Res720p, $"-vf \"scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2,setsar=1\" -c:a aac -ar 48000 -c:v h264 -profile:v main -crf 20 -sc_threshold 0 -g 48 -keyint_min 48 -hls_time 4 -hls_playlist_type vod -b:v 2800k -maxrate 2996k -max_muxing_queue_size 9999 -bufsize 4200k -b:a 128k -hls_segment_filename {Path.Combine("{0}", "720p_%03d.ts")} {Path.Combine("{0}","720p.m3u8")} " }, // {0} folder dest for m3u8 file
             { Resolution.Res1080p, $"-vf \"scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,setsar=1\" -c:a aac -ar 48000 -c:v h264 -profile:v main -crf 20 -sc_threshold 0 -g 48 -keyint_min 48 -hls_time 4 -hls_playlist_type vod -b:v 5000k -maxrate 5350k -max_muxing_queue_size 9999 -bufsize 7500k -b:a 192k -hls_segment_filename {Path.Combine("{0}", "1080p_%03d.ts")} {Path.Combine("{0}","1080p.m3u8")} "} // {0} folder dest for m3u8 file
         };
 

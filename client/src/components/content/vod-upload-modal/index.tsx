@@ -13,13 +13,17 @@ function uploadToServer(file: File, name: string) {
   fetch(uploadUrl(), {
     method: "POST",
     body: data,
-  }).then((response) => {
-    if (response.status == 200) {
-      alert(`File ${fileName} was uploaded succesfully`);
-    } else {
-      alert(`'${fileName}' upload failed. File might be corrupted!`);
-    }
-  });
+  })
+    .then((response) => {
+      if (response.status == 200) {
+        alert(`File ${fileName} was uploaded succesfully`);
+      } else {
+        alert(`'${fileName}' upload failed. File might be corrupted!`);
+      }
+    })
+    .catch(() =>
+      alert(`'${fileName}' upload failed. File might be corrupted!`)
+    );
 }
 
 const VodUploadModal = (props: ModalProps) => {

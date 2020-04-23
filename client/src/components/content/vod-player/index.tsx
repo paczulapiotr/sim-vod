@@ -3,11 +3,17 @@ import Hls from "hls.js";
 import { vodUrl } from "src/api/urls";
 import {
   storeBandwidths,
-  bandwidths,
   optimisticPrediction,
   pesimisticPrediction,
 } from "src/player/player";
 import "./style.scss";
+
+const qualityResolutions = {
+  0: "360p",
+  1: "480p",
+  2: "720p",
+  3: "1080p",
+};
 
 const qualityOptions = {
   "0": "Auto",
@@ -27,12 +33,10 @@ const VodPlayer = ({ vodGuid }: Props) => {
   const ref = useRef<HTMLVideoElement>();
   const [hls, setHls] = useState<Hls>();
   const [qualityPrediction, setPrediction] = useState("0");
+  const [nextClipResolution, setNextClipResolution] = useState("");
+  const [currentResolution, setCurrentResolution] = useState("");
 
   useEffect(() => {
-    console.log(
-      "changed prediction to",
-      (qualityOptions as any)[qualityPrediction]
-    );
     if (hls == null) return;
 
     if (levelUpdateTimeout != null) {
@@ -43,14 +47,14 @@ const VodPlayer = ({ vodGuid }: Props) => {
       hls.loadLevel = optimisticPrediction(bandwidthArray);
       levelUpdateTimeout = setInterval(() => {
         const predLevel = optimisticPrediction(bandwidthArray);
-        console.log("Prediction level:", predLevel);
+
         hls.loadLevel = predLevel;
       }, 4000);
     } else if (qualityPrediction === "2") {
       hls.loadLevel = pesimisticPrediction(bandwidthArray);
       levelUpdateTimeout = setInterval(() => {
         const predLevel = pesimisticPrediction(bandwidthArray);
-        console.log("Prediction level:", predLevel);
+
         hls.loadLevel = predLevel;
       }, 4000);
     } else {
@@ -71,17 +75,22 @@ const VodPlayer = ({ vodGuid }: Props) => {
       const srcUrl = vodUrl(vodGuid);
       hls.loadSource(srcUrl);
       hls.attachMedia(video);
+      hls.config.maxMaxBufferLength = 10;
 
-      hls.on(Hls.Events.LEVEL_SWITCHED, function() {
-        console.log("Level changed to:", hls.currentLevel);
+      hls.on(Hls.Events.LEVEL_SWITCHED, () => {
+        const level = (qualityResolutions as any)[hls.currentLevel];
+        setCurrentResolution(level);
       });
 
-      hls.on(Hls.Events.MANIFEST_PARSED, function() {
+      hls.on(Hls.Events.FRAG_LOADING, () => {
+        const level = (qualityResolutions as any)[hls.nextLoadLevel];
+        setNextClipResolution(level);
+      });
+
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
         video.play();
       });
 
-      console.log("HLS:");
-      console.log(hls);
       bandwidthUpdateTimeout = storeBandwidths(bandwidthArray, hls);
     }
 
@@ -101,6 +110,14 @@ const VodPlayer = ({ vodGuid }: Props) => {
           <option value="1">Optimistic</option>
           <option value="2">Pesimistic</option>
         </select>
+        <p>
+          Current resolution:
+          <span>{currentResolution}</span>
+        </p>
+        <p>
+          Downloading resolution:
+          <span>{nextClipResolution}</span>
+        </p>
       </div>
     </div>
   );

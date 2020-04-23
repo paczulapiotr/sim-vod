@@ -13,8 +13,8 @@ services:
     environment:
       - FFMPEG_PATH=ffmpeg
       - FFPROBE_PATH=ffprobe
-      - VOD_FOLDER_PATH=./vod
-      - PREVOD_FOLDER_PATH=./prevod
+      - VOD_FOLDER_PATH=/vod
+      - PREVOD_FOLDER_PATH=/prevod
       - MONGO_PATH=mongodb://db:27017
       - MONGO_DB_NAME=sim
     depends_on:
