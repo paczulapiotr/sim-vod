@@ -32,7 +32,7 @@ const VodUploadModal = (props: ModalProps) => {
 
   const uploadHandler = async () => {
     uploadToServer(file!, fileName!);
-    props.close();
+    onCloseOverride();
   };
 
   const cancelHandler = () => {
