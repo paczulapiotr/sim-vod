@@ -1,4 +1,4 @@
-version: "3"
+version: "2.3"
 
 services:
   db:
@@ -8,17 +8,20 @@ services:
       - mongoconfig:/data/configdb
   server:
     build: ./server
+    volumes:
+      - vod_server:/app
     ports:
       - 4880:5000
     environment:
       - FFMPEG_PATH=ffmpeg
       - FFPROBE_PATH=ffprobe
-      - VOD_FOLDER_PATH=/vod
-      - PREVOD_FOLDER_PATH=/prevod
+      - VOD_FOLDER_PATH=/app/vod
+      - PREVOD_FOLDER_PATH=/app/prevod
       - MONGO_PATH=mongodb://db:27017
       - MONGO_DB_NAME=sim
     depends_on:
       - db
+    cpu_percent: 100
   web:
     build: ./client
     ports:
@@ -27,6 +30,8 @@ services:
       - server
 
 volumes:
+  vod_server:
+    driver: local
   mongodb:
     driver: local
   mongoconfig:

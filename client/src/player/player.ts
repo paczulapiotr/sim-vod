@@ -35,6 +35,7 @@ export const storeBandwidths = (array: number[], hls: Hls): NodeJS.Timeout => {
         array.shift();
       }
       const currBandwidth = hls.bandwidthEstimate as number;
+      console.log("Current bandwidth:", currBandwidth);
       array.push(currBandwidth);
     },
     4000,

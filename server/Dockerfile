@@ -3,7 +3,6 @@
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS base
 
 ENV FFMPEG_PATH "ffmpeg"
-ENV VOD_PATH "/app/vod/"
 ENV MONGO_DB_NAME "simdb"
 ENV MONGO_PATH "mongodb://localhost:27017"
 RUN apt-get update
