@@ -6,26 +6,32 @@ export const bandwidths = {
 };
 const tableCapacity = 25;
 
-export const optimisticPrediction = (arr: number[]): number => {
-  const maxBandwidth = Math.max(...arr);
+const qualityPicker = (bandwidth: number): number => {
   let resolutionLevel = 0;
 
-  if (maxBandwidth > bandwidths["480p"]) resolutionLevel = 1;
-  if (maxBandwidth > bandwidths["720p"]) resolutionLevel = 2;
-  if (maxBandwidth > bandwidths["1080p"]) resolutionLevel = 3;
+  if (bandwidth > bandwidths["480p"]) resolutionLevel = 1;
+  if (bandwidth > bandwidths["720p"]) resolutionLevel = 2;
+  if (bandwidth > bandwidths["1080p"]) resolutionLevel = 3;
 
   return resolutionLevel;
 };
 
+export const defaultPrediction = (arr: number[]): number => {
+  const bandwidth = arr.length > 0 ? arr[arr.length - 1] : 0;
+
+  return qualityPicker(bandwidth);
+};
+
+export const optimisticPrediction = (arr: number[]): number => {
+  const maxBandwidth = Math.max(...arr);
+
+  return qualityPicker(maxBandwidth);
+};
+
 export const pesimisticPrediction = (arr: number[]): number => {
-  const maxBandwidth = Math.min(...arr);
-  let resolutionLevel = 0;
+  const minBandwidth = Math.min(...arr);
 
-  if (maxBandwidth > bandwidths["480p"]) resolutionLevel = 1;
-  if (maxBandwidth > bandwidths["720p"]) resolutionLevel = 2;
-  if (maxBandwidth > bandwidths["1080p"]) resolutionLevel = 3;
-
-  return resolutionLevel;
+  return qualityPicker(minBandwidth);
 };
 
 export const storeBandwidths = (array: number[], hls: Hls): NodeJS.Timeout => {

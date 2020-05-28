@@ -5,6 +5,7 @@ import {
   storeBandwidths,
   optimisticPrediction,
   pesimisticPrediction,
+  defaultPrediction,
 } from "src/player/player";
 import "./style.scss";
 
@@ -25,6 +26,15 @@ let bandwidthArray: number[] = [];
 let bandwidthUpdateTimeout: NodeJS.Timeout;
 let levelUpdateTimeout: NodeJS.Timeout;
 
+const qualitySetter = (hls: Hls, setter: (arr: number[]) => number) => {
+  hls.loadLevel = setter(bandwidthArray);
+  levelUpdateTimeout = setInterval(() => {
+    const predLevel = setter(bandwidthArray);
+
+    hls.loadLevel = predLevel;
+  }, 4000);
+};
+
 interface Props {
   vodGuid: string;
 }
@@ -38,26 +48,34 @@ const VodPlayer = ({ vodGuid }: Props) => {
 
   useEffect(() => {
     if (hls == null) return;
+    console.log("Prediction method: auto");
+    qualitySetter(hls, defaultPrediction);
+
+    return () => {
+      if (levelUpdateTimeout != null) {
+        clearInterval(levelUpdateTimeout);
+      }
+    };
+  }, [hls]);
+
+  useEffect(() => {
+    if (hls == null) return;
 
     if (levelUpdateTimeout != null) {
       clearInterval(levelUpdateTimeout);
     }
 
-    if (qualityPrediction === "1") {
-      hls.loadLevel = optimisticPrediction(bandwidthArray);
-      levelUpdateTimeout = setInterval(() => {
-        const predLevel = optimisticPrediction(bandwidthArray);
-
-        hls.loadLevel = predLevel;
-      }, 4000);
+    if (qualityPrediction === "0") {
+      console.log("Prediction method: auto");
+      qualitySetter(hls, defaultPrediction);
+    } else if (qualityPrediction === "1") {
+      console.log("Prediction method: optimistic");
+      qualitySetter(hls, optimisticPrediction);
     } else if (qualityPrediction === "2") {
-      hls.loadLevel = pesimisticPrediction(bandwidthArray);
-      levelUpdateTimeout = setInterval(() => {
-        const predLevel = pesimisticPrediction(bandwidthArray);
-
-        hls.loadLevel = predLevel;
-      }, 4000);
+      console.log("Prediction method: pesimistic");
+      qualitySetter(hls, pesimisticPrediction);
     } else {
+      console.log("Prediction method: hls.js original algorithm");
       hls.loadLevel = -1;
     }
     return () => {
